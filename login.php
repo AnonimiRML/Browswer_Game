@@ -31,7 +31,7 @@ XYZ;
 	
 
 
-include( $_SERVER['DOCUMENT_ROOT'] . '/OOP/public/buttom.html' );
+include('public/buttom.html' );
 
 
 $mysqli = new database;
