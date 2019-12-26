@@ -49,7 +49,7 @@ $time = date("m/d/Y H:i:s", $row['time']); // הפיכת השניות לתארי
 	
 print <<<XYZ
       <tr>
-	  <td>{$row['body']}</td>
+	  <td align="right">{$row['body']}</td>
 	  <td>{$time}</td>
 	  </tr>
 XYZ;

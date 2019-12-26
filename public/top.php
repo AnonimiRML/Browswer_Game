@@ -40,7 +40,7 @@ if(isset($_COOKIE['login'])){
 }
 
 
-$top = <<< HTML
+$top = <<< XYZ
 
 <!DOCTYPE html>
 <html>
@@ -87,61 +87,14 @@ $top = <<< HTML
       .row.content {height:auto;} 
     }
   </style>
+  
+  
+  
+  
 </head>
 <body>
 
-<script>
 
-function reload_messages() {
-      
-        if (window.XMLHttpRequest) {
-            // code for IE7+, Firefox, Chrome, Opera, Safari
-xmlhttp = new XMLHttpRequest();
-
-        }
-xmlhttp.onreadystatechange = function() {
-	
-	
-            if (this.readyState == 4 && this.status == 200) {
-			
-
-if (this.response > 0){
-    
-	
-	
-	document.getElementById("messages").innerHTML = '<a href="message.php"><i class="fas fa-envelope" style="color:orange;"></i> ' +  this.response + '</a>';
-	
-	if (messages_not_view < this.response){
-		var x = document.getElementById("messages_alert_new_message");
-	    x.style.display = "block";
-		
-	}
-	
-}else{
-	
-	document.getElementById("messages").innerHTML = '<a href="message.php"><i class="fas fa-envelope-open"></i> 0</a>';
-}
-
-
-
-     }
-};
-
-xmlhttp.open("GET","ajax_reload.php?reload={$username}" ,true);
-
-xmlhttp.send();
-    }
-
-window.onload = function(e) {
-	
-	window.messages_not_view = {$messages_not_view};
-	
-	reload_messages();
-	setInterval(function(){ reload_messages(); }, 3000);
-};
-
-
-</script>
 
 <nav class="navbar navbar-inverse">
   <div class="container-fluid">
@@ -182,8 +135,25 @@ window.onload = function(e) {
 	  
 	  
     </div>
+    
+    
+    <script>
+
+if ({$messages_not_view} != 0){
+    document.getElementById("messages").innerHTML = '<a href="message.php"><i class="fas fa-envelope" style="color:orange;"></i> {$messages_not_view}</a>';
+    
+}
+
+if ({$count_notifications_not_view} != 0){
+    document.getElementById("notifications").innerHTML = '<a href="notifications"><i class="fas fa-bell" style="color:orange;"></i> {$count_notifications_not_view}</a>';
+    
+}
+
+
+
+</script>
 	
-HTML;
+XYZ;
 
 echo $top;
 

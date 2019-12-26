@@ -77,18 +77,22 @@ print <<<XYZ
 XYZ;
 
 $select_called_up_soliders = $player->select_called_up_soliders($username);
+    
 
 while ($solider = $select_called_up_soliders->fetch_assoc()){
-	
+
+$total_solider_accuracy = $player->calc_soliders_features_with_upgrades($solider['id'])[0];
+$total_solider_attack = $player->calc_soliders_features_with_upgrades($solider['id'])[1];
+
+    
 print <<<XYZ
 
 <tr>
 	  <td><input type="checkbox" name="soliders[]" value="{$solider['id']}"/></td>
-	  <td>{$solider['name']}</td>
-	  <td>{$solider['attack']}</td>
+	  <td><a href="soliders.php?id={$solider['id']}">{$solider['name']}</a></td>
+	  <td>({$solider['attack']}) $total_solider_attack</td>
 	  <td>
-	  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{$solider['accuracy']}" aria-valuemin="0" aria-valuemax="100" style="width:{$solider['accuracy']}%">
-                   {$solider['accuracy']}% 
+	  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{$solider['accuracy']}" aria-valuemin="0" aria-valuemax="100" style="width:{$total_solider_accuracy}%">({$solider['accuracy']}%) {$total_solider_accuracy}%
                </div> </td>
 </tr>
 
@@ -132,6 +136,8 @@ if (isset($_POST['attack'])){
 	
 	$attacker = $username;
 	$attacker_soliders_id_array = $_POST['soliders'];
+    
+    
 	
 	$query = $player->attacking($attacker, $defender, $attacker_soliders_id_array);
 	

@@ -1,13 +1,5 @@
 <?php
 
-if (isset($_GET['reload'])){
-	
-	$message = new message;
-	$messages_not_view = $message->count_message_not_view($_GET['reload']); // כמות ההודעות שהמשתמש עדיין לא קרא;
-	echo $messages_not_view;
-	
-	
-};
 
 include ("public/isset_cookie.php"); // ייבוא בדיקת עוגיות
 include ("public/classes.php"); // יבוא אובייקטים
@@ -37,6 +29,8 @@ include ("public/top.php"); // ייבוא חלק עליון של הדף
 
 $soliders = $player->army($username); // ספירת כמות החיילים של השחקן שגויסו
 
+$cost_scout_improve = ($data['scouting'] * 1000) + ($data['scouting'] * 1000) * $data['scouting'];
+
 print <<<XYZ
 
 <script>
@@ -49,6 +43,15 @@ x.style.display = "block";
 x.style.display = "none";
   }
 }
+
+
+
+
+
+
+
+
+
 
 
 
@@ -69,12 +72,16 @@ x.style.display = "none";
 	      <p>{$data['id']} : מספר אישי </p>
 	      <p>{$username} : שם משתמש </p>
 		   <p>{$money_view} : דולרים</p>
+           <p>נקודות הגנה של המוצב : {$data['defence']}</p>
 		   <p>{$soliders} / {$data['houses']} : חיילים</p>
 		   {$data['scouting']}% : מערך סקאוטינג <div class="progress">  
                <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{$data['scouting']}" aria-valuemin="0" aria-valuemax="100" style="width:{$data['scouting']}%">
                    {$data['scouting']}% 
                </div>
            </div>
+           <form action="home.php" method="POST">
+           <input type="submit" name="improve_scout_abillity" value="שפר מערכת סקאוטינג" class="btn btn-success"/> עלות : {$cost_scout_improve}
+           </form>
 	  </div>
 	  
 	  <div class="col-sm-4" align="right">
@@ -111,7 +118,21 @@ if (isset($_POST['profile_image_submit'])){
 	
 }
 
+if (isset($_POST['improve_scout_abillity'])){
+    
+    
+    $query = $player->scout_system_improve($username , $cost_scout_improve);
+    if ($query){
+        echo("<meta http-equiv='refresh' content='0'>");
+		echo "<script>alert('השדרוג הצליח !')</script>";
+        var_dump($query);
+    }else{
+		echo "<script>alert('משהו השתבש !')</script>";
+    }
+    
+}
 
+var_dump($cost_scout_improve);
 
 
 

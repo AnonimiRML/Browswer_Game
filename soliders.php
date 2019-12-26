@@ -95,7 +95,6 @@ print <<<XYZ
 	      <p>{$solider_data['id']} : מספר אישי</p>
 		  <p>{$solider_data['name']} : שם החייל </p>
 		  <p>{$solider_data['attack']} : התקפה </p>
-		  <p>{$solider_data['defence']} : הגנה </p>
 		  {$solider_data['accuracy']}% : דיוק <div class="progress">  
                <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{$solider_data['accuracy']}" aria-valuemin="0" aria-valuemax="100" style="width:{$solider_data['accuracy']}%">
                    {$solider_data['accuracy']}% 
@@ -126,7 +125,10 @@ XYZ;
 	
 	
 $name = $solider_data['name']; // שם החייל
-
+    
+$total_solider_accuracy = $player->calc_soliders_features_with_upgrades($solider_data['id'])[0];
+$total_solider_attack = $player->calc_soliders_features_with_upgrades($solider_data['id'])[1];
+    
 print <<<XYZ
 <div class="col-sm-8"> 
       <h1 align="right">פרטי חייל</h1>
@@ -134,17 +136,17 @@ print <<<XYZ
 	  <br>
 	  
 	  <div class="col-sm-4" align="right">
-	       
+	       <p>{$solider_data['weapon']} : נשק אישי</p>
+           <p>{$solider_data['telescop']} : כוונת</p>
+           
 	  </div>
 	  
 	   <div class="col-sm-4" align="right">
 	      <p>{$solider_data['id']} : מספר אישי</p>
 		  <p>{$solider_data['name']} : שם החייל </p>
-		  <p>{$solider_data['attack']} : התקפה </p>
-		  <p>{$solider_data['defence']} : הגנה </p>
-		  {$solider_data['accuracy']}% : דיוק <div class="progress">  
-               <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{$solider_data['accuracy']}" aria-valuemin="0" aria-valuemax="100" style="width:{$solider_data['accuracy']}%">
-                   {$solider_data['accuracy']}% 
+		  <p>({$solider_data['attack']}) {$total_solider_attack} : התקפה </p>
+		  ({$solider_data['accuracy']}%) {$total_solider_accuracy}% : דיוק <div class="progress">  
+               <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{$solider_data['accuracy']}" aria-valuemin="0" aria-valuemax="100" style="width:{$total_solider_accuracy}%">({$solider_data['accuracy']}%) {$total_solider_accuracy}%
                </div>
            </div>
 		  
@@ -206,7 +208,6 @@ print <<<HTML
 	{$solider['cost']} : עלות <br>
 	{$solider['accuracy']} : דיוק <br>
 	{$solider['attack']} : התקפה <br>
-	{$solider['defence']} : הגנה <br>
 	
 	
 	</p>
@@ -264,6 +265,10 @@ HTML;
 $soliders_option = $player->select_called_up_soliders($username); // שליפת חיילים שהשחקן גייס כבר
 
 while ($solider = $soliders_option->fetch_assoc()){
+
+$total_solider_accuracy = $player->calc_soliders_features_with_upgrades($solider['id'])[0];
+$total_solider_attack = $player->calc_soliders_features_with_upgrades($solider['id'])[1];
+
 print <<<HTML
 <div class="col-sm-3">
 <div class="card">
@@ -271,15 +276,17 @@ print <<<HTML
   <div class="card-body">
     <h5 class="card-title">{$solider['name']}</h5>
     <p class="card-text">
-	{$solider['cost']} : עלות <br>
-	{$solider['accuracy']} : דיוק <br>
-	{$solider['attack']} : התקפה <br>
-	{$solider['defence']} : הגנה <br>
+	({$solider['accuracy']}) $total_solider_accuracy : דיוק <br>
+	({$solider['attack']}) {$total_solider_attack} : התקפה <br>
 	
 	
 	</p>
-
+    <form action="" method="POST">
     <a href="soliders.php?id={$solider['id']}" class="btn btn-primary">צפה בפרופיל</a>
+    <input type="submit" name="fire" value="פטר חייל" class="btn btn-danger"/>
+    <input type="hidden" name="id" value="{$solider['id']}">
+	<input type="hidden" name="cost" value="{$solider['cost']}">
+    </form>
 
 	
   </div>
@@ -325,6 +332,21 @@ if (isset($_POST['call_up']) && isset($_POST['id']) && isset($_POST['cost'])){
 		 echo "<script>alert('אין לך מספיק דולרים או בתים !')</script>";
 	}
 }
+
+if (isset($_POST['fire']) && isset($_POST['id']) && isset($_POST['cost'])){
+	
+	
+	$query = $player->fire_solider($username, $_POST['id'], $_POST['cost']);
+    
+    if ($query){
+        echo("<meta http-equiv='refresh' content='0'>");
+        echo "<script>alert('החייל פוטר !')</script>";
+    }else{
+        echo "<script>alert('משהו השתבש !')</script>";
+    }
+}
+
+
 
 
 if (isset($_POST['refresh_soliders'])){

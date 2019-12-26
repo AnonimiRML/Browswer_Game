@@ -2,14 +2,56 @@
 
 
 class database {
-   protected $hostname = "localhost";
-   protected $username = "root";
-   protected $password = "6969778";
-   protected $database = "test";
+    
+   private $hostname = "localhost";
+   private $username = "root";
+   private $password = "6969778";
+   private $database = "test";
    public $conn;
    protected $first_names = array("מוחמד","יוסף","אריאל","עומר","אדם","דודו","דניאל","לוי","איתן","אורי","ברוך","אבי","נדב");
    protected $last_names = array("כהן","לוי","מזרחי","פרץ","ביטון","דהן","פרידמן","מלכה","אזולאי","כץ","עמר","אוחיון");
    protected $cost = array(100, 200, 300, 400, 500, 600);
+    
+    
+    
+   public function arsenal($tool){
+    
+    if ($tool === '0'){
+        return array(0,0);
+    }
+       
+   // מחירים ושיפור התקפה של נשקים
+   $knife = [200, 3, 'התקפה', 'weapon'];
+   $pistol = [500, 4, 'התקפה', 'weapon'];
+   $ak47 = [1000, 6, 'התקפה', 'weapon'];
+   $m16 = [2000, 10, 'התקפה', 'weapon'];
+   $rpg = [3500, 14, 'התקפה', 'weapon'];
+   $mag = [6000, 25, 'התקפה', 'weapon'];
+    
+   // מחירים ושיפור אחוזי דיוק של כוונות
+   $metal = [50, 5, 'דיוק', 'telescop'];
+   $mafro_lite = [150, 13, 'דיוק', 'telescop'];
+   $mafro = [350, 26, 'דיוק', 'telescop'];
+   $m5 = [800, 50, 'דיוק', 'telescop'];
+   $trij = [2000, 80, 'דיוק', 'telescop'];
+       
+   return $$tool;
+       
+   }
+    
+    
+
+   public function places_and_defences($place){
+       
+       $sand_bags = [3000, 5 ,'הגנה', 'defence'];
+       $board_of_wood = [12000, 23, 'הגנה', 'defence'];
+       $board_of_steel = [55000, 100, 'הגנה', 'defence'];
+       
+       
+       return $$place;
+       
+       
+   }
    
    
 
@@ -18,7 +60,7 @@ class database {
 	  return $this->conn; 
    }
     
-	
+    
 	
 	public function login($username, $password){ // ביצוע התחברות
 		
@@ -61,7 +103,7 @@ class database {
 			$cost = $cost_array[rand(0, count($cost_array) - 1)] * $scouting;
 			$image = $image_number_array[rand(0, count($image_number_array) - 1)];
 			$image = "public/images/soliders/" . $image . ".jpg";
-			$this->conn->query("INSERT INTO `soliders` (`name`, `commander`, `image`,`cost`, `accuracy`, `attack`, `defence`, `call_up`) VALUES ('" . $name . "', '" . $username . "', '" . $image . "','" . $cost . "', '" . $accuracy . "', '" . $attack . "', '" . $defence . "', 0 )");
+			$this->conn->query("INSERT INTO `soliders` (`name`, `commander`, `image`,`cost`, `accuracy`, `attack`, `defence`, `call_up`, `weapon`, `telescop`) VALUES ('" . $name . "', '" . $username . "', '" . $image . "','" . $cost . "', '" . $accuracy . "', '" . $attack . "', '" . $defence . "', 0, 0, 0)");
 		}
 		
 		return True;
@@ -81,7 +123,10 @@ class database {
 			$image = "public/images/profiles/default.png";
 			
 			$query = "INSERT INTO `users` (email, username, password, image, money, last_refresh_soliders, houses, scouting, protection, spies, max_spies) VALUES ('" . $email . "', '" . $username . "', '" . $password . "', '" . $image . "', 30000, '" . time() . "', 5, 1, 5, 10, 30)"; // שאילתה להוספה למערכת
-		    if ($this->conn->query($query) && $generate_soliders == True) { // אם השאילתה בוצעה בהצלחה
+		    
+            $query2 = "INSERT INTO `weapons` (username, knife, pistol, ak47, m16, rpg, mag) VALUES ('" . $username . "', 0, 0, 0, 0, 0, 0)";
+            
+            if ($this->conn->query($query) && $this->conn->query($query2) && $generate_soliders == True) { // אם השאילתה בוצעה בהצלחה
 			    echo "<script>alert('נרשמת בהצלחה. אנא אשר הרשמת באימייל !')</script>"; // חלון קופץ אשר מבשר על ההצלחה
 				$this->sendmail();
 				return; // סיים
@@ -260,6 +305,85 @@ class player extends database {
 		}
 		
 	}
+    
+    public function scout_system_improve($username, $cost_scout_improve){
+        
+        $query = $this->conn->query("UPDATE `users` SET `money` = `money` - '" . $cost_scout_improve . "' WHERE `username` = '" . $username . "' limit 1 ");
+        $query2 = $this->conn->query("UPDATE `users` SET `scouting` = `scouting` + 1 WHERE `username` = '" . $username . "' limit 1");
+    
+        if ($query && $query2){
+            return True;
+        }
+    }
+    
+    public function calc_soliders_features_with_upgrades($solider_id){
+        
+        $solider = $this->conn->query("SELECT `attack`,`accuracy`,`weapon`,`telescop` FROM `soliders` WHERE `id` = '" . $solider_id . "'")->fetch_assoc();
+        
+        if ($solider['weapon'] === '0'){
+            $solider_weapon = 'ללא';
+            $upgrade_attack = 0;
+    
+        }else{
+            $solider_weapon = $solider['weapon'];
+            $upgrade_attack = $this->arsenal($solider_weapon)[1];
+        }
+    
+
+        if ($solider['telescop'] === '0'){
+            $solider_telescop = 'ללא';
+            $upgrade_accuracy = 0;
+    
+        }else{
+            $solider_telescop = $solider['telescop'];
+            $upgrade_accuracy = $this->arsenal($solider_telescop)[1];
+        }
+    
+
+
+        $total_solider_accuracy = $solider['accuracy'] + $upgrade_accuracy;
+        $total_solider_attack = $solider['attack'] + $upgrade_attack;
+    
+        if ($total_solider_accuracy > 100){
+            $total_solider_accuracy = 100;
+        }
+        
+        
+        
+        return array($total_solider_accuracy, $total_solider_attack);
+        
+    }
+    
+    public function buy_tools($soliders_bought_tools_id_array, $type, $tool, $cost, $username){
+        
+        
+        for ($i = 0; $i < count($soliders_bought_tools_id_array); $i++) {
+		
+		    $add_tool_to_solider = $this->conn->query("UPDATE `soliders` SET ".$type." = '" . $tool . "' WHERE `id` = '" . $soliders_bought_tools_id_array[$i] . "'");
+            
+		}
+        
+        
+        
+        $remove_money_from_the_buyer = $this->conn->query("UPDATE `users` SET `money` = `money` - '" . $cost * count($soliders_bought_tools_id_array) . "' WHERE `username` = '" . $username . "' limit 1");
+        
+        return $remove_money_from_the_buyer;
+        
+        
+    }
+    
+    public function buy_defences_and_places($username, $upgrade, $cost, $type){
+        
+        $query = $this->conn->query("UPDATE `users` SET ".$type." = ".$type." + '" . $upgrade . "' WHERE `username` = '" . $username . "'");
+        $query2 = $this->conn->query("UPDATE `users` SET `money` = `money` - '" . $cost . "' WHERE `username` = '" . $username . "'");
+        
+        if ($query && $query2){
+            return True;
+        }else{
+            return False;
+        }
+        
+    }
 	
 	public function army($username){ // מתודה לחישוב כמות החיילים של המשתמש
 		
@@ -278,7 +402,7 @@ class player extends database {
 	
 	public function data($username){ // מתודה לשליפת מידע על המשתמש
 		
-		$query = $this->conn->query("SELECT `id`, `username`, `money`, `last_refresh_soliders`, `image`, `scouting`, `houses`, `protection`, `spies`, `max_spies` FROM `users` WHERE `username` = '" . $username . "' limit 1")->fetch_assoc();
+		$query = $this->conn->query("SELECT `id`, `username`, `money`, `last_refresh_soliders`, `image`, `scouting`, `houses`, `protection`, `spies`, `max_spies`, `defence` FROM `users` WHERE `username` = '" . $username . "' limit 1")->fetch_assoc();
 		return $query;
 		
 	}
@@ -306,7 +430,20 @@ class player extends database {
 		$query = $this->conn->query("SELECT * FROM `soliders` WHERE `commander` = '" . $username . "' AND `call_up` = 1");
 		return $query; // החזר תוצאה
 		
+        
 	}
+    
+    public function fire_solider($username, $id, $cost){
+        
+        $query = $this->conn->query("UPDATE `soliders` SET `call_up` = 0 WHERE `id` = '" . $id . "' limit 1");
+        $query2 = $this->conn->query("UPDATE `users` SET `money` = `money` + '" . $cost / 2 . "' WHERE `username` = '" . $username . "' limit 1");
+        
+        if($query && $query2){ // אם שתי השאילתות הצליחו
+		return True; // החזר תוצאה חיובית
+		}else{ // אם לא
+			return False; // החזר תוצאה שלילית
+		}
+    }
 	
 	public function spying($attacker, $defender, $attacker_spies){ // מתודה לריגול בין משתמשים
 		
@@ -329,6 +466,8 @@ class player extends database {
 				$body .= "התקפה : " . $row['attack'] . " הגנה : " . $row['defence'] . " עלות : " . $row['cost'] .  " " . $row['name'] . " <br>";
 				
 			}
+            
+            var_dump($body);
 			
 			$this->send_notification($attacker, $body);
 			
@@ -355,22 +494,39 @@ class player extends database {
 		
 		$attacker_attack = 0;
 		$attacker_accuracy = 0;
-		$attacker_number_of_soliders = count($attacker_soliders_id_array);
+		$attacker_number_of_soliders = count($attacker_soliders_id_array) - 1;
 		
 		
-		for ($i = 0; $i < count($attacker_soliders_id_array); $i++) {
+		for ($i = 0; $i < count($attacker_soliders_id_array) - 1; $i++) {
 		
-		    $attacker_solider = $this->conn->query("SELECT `attack`, `accuracy` FROM `soliders` WHERE `id` = '" . $attacker_soliders_id_array[$i] . "'")->fetch_assoc();
+		    $attacker_solider = $this->conn->query("SELECT `attack`, `accuracy`, `weapon`, `telescop` FROM `soliders` WHERE `id` = '" . $attacker_soliders_id_array[$i] . "'")->fetch_assoc();
+
 			
-			$attacker_attack += $attacker_solider['attack'];
-			$attacker_accuracy += $attacker_solider['accuracy'];
+			$attacker_attack += $attacker_solider['attack']; // הוספת נזק למתקפה עקב כוח התקיפה של החייל
+            
+            
+            
+            $attacker_attack += $this->arsenal($attacker_solider['weapon'])[1]; // הוספת נזק למתקפה עקב שימוש בנשק החייל
+            
+            
+    
+            
+            
+			$total_attacker_solider_accuracy = intval($attacker_solider['accuracy']) + $this->arsenal($attacker_solider['telescop'])[1];
+            
+            
+            if ($total_attacker_solider_accuracy > 100){
+                $total_attacker_solider_accuracy = 100;
+            }
+            
+            $attacker_accuracy += $total_attacker_solider_accuracy;
+            
 		
 		}
 		
 		$defender_defence = 0;
 		$defender_accuracy = 0;
 		$defender_number_of_soliders = $this->conn->query("SELECT COUNT(*) AS soliders FROM `soliders` WHERE `commander` = '" . $defender . "' AND `call_up` = 1")->fetch_assoc()['soliders'];
-		var_dump($defender_number_of_soliders);
 		
 		
 		$query = $this->conn->query("SELECT `defence`, `accuracy` FROM `soliders` WHERE `commander` = '" . $defender . "' AND `call_up` = 1");
@@ -385,10 +541,10 @@ class player extends database {
 		$attacker_luck = rand(8.5, 11.5) / 10;
 		
 		
-		
-		
-		$attacker_total = ($attacker_attack * (($attacker_accuracy / $attacker_number_of_soliders) / 100)) / $attacker_luck;
+		$attacker_total = ($attacker_attack * ($attacker_accuracy / $attacker_number_of_soliders / 100)) / $attacker_luck;
+        var_dump($attacker_accuracy);
 		var_dump($attacker_total);
+        var_dump($attacker_attack);
 		$defender_total = ($defender_defence * (($defender_accuracy / $defender_number_of_soliders) / 100)) / $defender_luck;
 		var_dump($defender_total);
 		
