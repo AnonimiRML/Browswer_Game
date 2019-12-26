@@ -5,7 +5,7 @@ class database {
     
    private $hostname = "localhost";
    private $username = "root";
-   private $password = "6969778";
+   private $password = "123456";
    private $database = "test";
    public $conn;
    protected $first_names = array("מוחמד","יוסף","אריאל","עומר","אדם","דודו","דניאל","לוי","איתן","אורי","ברוך","אבי","נדב");
