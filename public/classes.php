@@ -122,11 +122,11 @@ class database {
 			$generate_soliders = $this->generate_soliders($username); // חישוב החיילים של המשתמש והכנסם למערכת
 			$image = "public/images/profiles/default.png";
 			
-			$query = "INSERT INTO `users` (email, username, password, image, money, last_refresh_soliders, houses, scouting, protection, spies, max_spies) VALUES ('" . $email . "', '" . $username . "', '" . $password . "', '" . $image . "', 30000, '" . time() . "', 5, 1, 5, 10, 30)"; // שאילתה להוספה למערכת
+			$query = "INSERT INTO `users` (email, username, password, image, money, last_refresh_soliders, houses, scouting, protection, spies, max_spies, defence) VALUES ('" . $email . "', '" . $username . "', '" . $password . "', '" . $image . "', 30000, '" . time() . "', 5, 1, 5, 10, 30, 30)"; // שאילתה להוספה למערכת
 		    
-            $query2 = "INSERT INTO `weapons` (username, knife, pistol, ak47, m16, rpg, mag) VALUES ('" . $username . "', 0, 0, 0, 0, 0, 0)";
+           
             
-            if ($this->conn->query($query) && $this->conn->query($query2) && $generate_soliders == True) { // אם השאילתה בוצעה בהצלחה
+            if ($this->conn->query($query) && $generate_soliders == True) { // אם השאילתה בוצעה בהצלחה
 			    echo "<script>alert('נרשמת בהצלחה. אנא אשר הרשמת באימייל !')</script>"; // חלון קופץ אשר מבשר על ההצלחה
 				$this->sendmail();
 				return; // סיים

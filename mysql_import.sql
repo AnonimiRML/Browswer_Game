@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 11, 2019 at 08:29 PM
+-- Generation Time: Dec 26, 2019 at 02:54 PM
 -- Server version: 5.7.14
 -- PHP Version: 7.0.10
 
@@ -63,7 +63,9 @@ CREATE TABLE `soliders` (
   `accuracy` int(11) NOT NULL,
   `attack` int(11) NOT NULL,
   `defence` int(11) NOT NULL,
-  `call_up` tinyint(1) NOT NULL
+  `call_up` tinyint(1) NOT NULL,
+  `weapon` text NOT NULL,
+  `telescop` text NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -80,6 +82,7 @@ CREATE TABLE `users` (
   `image` text NOT NULL,
   `money` int(11) NOT NULL,
   `last_refresh_soliders` int(11) NOT NULL,
+  `defence` int(11) NOT NULL,
   `houses` int(11) NOT NULL,
   `scouting` int(11) NOT NULL,
   `protection` int(11) NOT NULL,
@@ -117,17 +120,17 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `message`
 --
 ALTER TABLE `message`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
 --
 -- AUTO_INCREMENT for table `soliders`
 --
 ALTER TABLE `soliders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=373;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=563;
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
